@@ -4065,930 +4065,7 @@ TeleportTab:CreateToggle({
 })
 
 end
-do
-local BotESPEnabled = false
-local BotESPConnection = nil
-local BotESPData = {}
 
-local RigsFolder = workspace:WaitForChild("Rigs")
-
-local function GetBotHitbox(Rig)
-    local Hitbox = Rig:FindFirstChild("Hitbox", true)
-
-    if Hitbox and Hitbox:IsA("BasePart") then
-        return Hitbox
-    end
-
-    return nil
-end
-
-local function RemoveBotESP(Rig)
-    local Data = BotESPData[Rig]
-
-    if not Data then
-        return
-    end
-
-    if Data.Gui then
-        Data.Gui:Destroy()
-    end
-
-    if Data.Beam then
-        Data.Beam:Destroy()
-    end
-
-    if Data.SkyPart then
-        Data.SkyPart:Destroy()
-    end
-
-    BotESPData[Rig] = nil
-end
-
-local function CreateBotESP(Rig)
-    if BotESPData[Rig] then
-        return
-    end
-
-    local Hitbox = GetBotHitbox(Rig)
-
-    if not Hitbox then
-        return
-    end
-
-    local Gui = Instance.new("BillboardGui")
-    Gui.Name = "KOMAT_BotName"
-    Gui.Adornee = Hitbox
-    Gui.Size = UDim2.fromOffset(180, 55)
-    Gui.StudsOffset = Vector3.new(0, 4, 0)
-    Gui.AlwaysOnTop = true
-    Gui.MaxDistance = 10000
-    Gui.Parent = Hitbox
-
-    local Background = Instance.new("Frame")
-    Background.Size = UDim2.new(1, 0, 1, 0)
-    Background.BackgroundTransparency = 0.15
-    Background.Parent = Gui
-
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 10)
-    Corner.Parent = Background
-
-    local Stroke = Instance.new("UIStroke")
-    Stroke.Thickness = 2
-    Stroke.Transparency = 0.1
-    Stroke.Parent = Background
-
-    local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, -10, 0, 28)
-    Title.Position = UDim2.fromOffset(5, 3)
-    Title.BackgroundTransparency = 1
-    Title.Text = "⚠ " .. tostring(Rig.Name)
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.TextScaled = true
-    Title.Font = Enum.Font.GothamBold
-    Title.Parent = Background
-
-    local Status = Instance.new("TextLabel")
-    Status.Size = UDim2.new(1, -10, 0, 18)
-    Status.Position = UDim2.fromOffset(5, 32)
-    Status.BackgroundTransparency = 1
-    Status.Text = "NEXTBOT • DETECTED"
-    Status.TextColor3 = Color3.fromRGB(190, 190, 190)
-    Status.TextScaled = true
-    Status.Font = Enum.Font.GothamMedium
-    Status.Parent = Background
-
-    local SkyPart = Instance.new("Part")
-    SkyPart.Name = "KOMAT_BotSkyPoint"
-    SkyPart.Size = Vector3.new(0.1, 0.1, 0.1)
-    SkyPart.Transparency = 1
-    SkyPart.Anchored = true
-    SkyPart.CanCollide = false
-    SkyPart.CanTouch = false
-    SkyPart.CanQuery = false
-    SkyPart.Parent = workspace
-
-    local SkyAttachment = Instance.new("Attachment")
-    SkyAttachment.Parent = SkyPart
-
-    local BotAttachment = Instance.new("Attachment")
-    BotAttachment.Parent = Hitbox
-
-    local Beam = Instance.new("Beam")
-    Beam.Name = "KOMAT_BotLine"
-    Beam.Attachment0 = SkyAttachment
-    Beam.Attachment1 = BotAttachment
-    Beam.Width0 = 0.08
-    Beam.Width1 = 0.08
-    Beam.FaceCamera = true
-    Beam.LightEmission = 1
-    Beam.LightInfluence = 0
-    Beam.Transparency = NumberSequence.new(0.1)
-    Beam.Color = ColorSequence.new(
-        Color3.fromRGB(255, 255, 255)
-    )
-    Beam.Parent = SkyPart
-
-    BotESPData[Rig] = {
-        Gui = Gui,
-        SkyPart = SkyPart,
-        Beam = Beam
-    }
-end
-
-local function UpdateBotESP()
-    for Rig, Data in pairs(BotESPData) do
-        if not Rig.Parent then
-            RemoveBotESP(Rig)
-            continue
-        end
-
-        local Hitbox = GetBotHitbox(Rig)
-
-        if not Hitbox then
-            RemoveBotESP(Rig)
-            continue
-        end
-
-        Data.SkyPart.CFrame =
-            CFrame.new(Hitbox.Position + Vector3.new(0, 60, 0))
-    end
-
-    for _, Rig in ipairs(RigsFolder:GetChildren()) do
-        if GetBotHitbox(Rig) then
-            CreateBotESP(Rig)
-        end
-    end
-end
-
-local function StartBotESP()
-    if BotESPConnection then
-        BotESPConnection:Disconnect()
-    end
-
-    UpdateBotESP()
-
-    BotESPConnection = RunService.Heartbeat:Connect(function()
-        if BotESPEnabled then
-            UpdateBotESP()
-        end
-    end)
-end
-
-local function StopBotESP()
-    if BotESPConnection then
-        BotESPConnection:Disconnect()
-        BotESPConnection = nil
-    end
-
-    for Rig in pairs(BotESPData) do
-        RemoveBotESP(Rig)
-    end
-
-    BotESPData = {}
-end
-
-VisualTab:CreateSection("มองหาบอท")
-
-VisualTab:CreateToggle({
-    Name = "มองหาบอท",
-    Default = false,
-    Callback = function(Value)
-        BotESPEnabled = Value
-
-        if Value then
-            StartBotESP()
-
-            Window:Notify({
-                Title = "KRYVEX HUB",
-                Content = "เปิดระบบมองหาบอทแล้ว",
-                Duration = 3
-            })
-        else
-            StopBotESP()
-
-            Window:Notify({
-                Title = "KRYVEX HUB",
-                Content = "ปิดระบบมองหาบอทแล้ว",
-                Duration = 3
-            })
-        end
-    end
-})
-
-end
-do
-local PlayerESPEnabled = false
-local PlayerESPConnection = nil
-local PlayerESPData = {}
-local PlayerCharacterConnections = {}
-
-local PlayersFolder = game:GetService("Players")
-
-local SkyPart = nil
-local SkyAttachment = nil
-
-local function RemovePlayerESP(Player)
-    local Data = PlayerESPData[Player]
-
-    if not Data then
-        return
-    end
-
-    if Data.Gui then
-        Data.Gui:Destroy()
-    end
-
-    if Data.Highlight then
-        Data.Highlight:Destroy()
-    end
-
-    if Data.Attachment then
-        Data.Attachment:Destroy()
-    end
-
-    if Data.Beam then
-        Data.Beam:Destroy()
-    end
-
-    PlayerESPData[Player] = nil
-end
-
-local function CreateSkyPoint()
-    if SkyPart then
-        SkyPart:Destroy()
-    end
-
-    SkyPart = Instance.new("Part")
-    SkyPart.Name = "KOMAT_PlayerESP_Sky"
-    SkyPart.Size = Vector3.new(0.1, 0.1, 0.1)
-    SkyPart.Transparency = 1
-    SkyPart.Anchored = true
-    SkyPart.CanCollide = false
-    SkyPart.CanTouch = false
-    SkyPart.CanQuery = false
-    SkyPart.Parent = workspace
-
-    SkyAttachment = Instance.new("Attachment")
-    SkyAttachment.Name = "KOMAT_PlayerESP_Center"
-    SkyAttachment.Parent = SkyPart
-end
-
-local function CreatePlayerESP(Player)
-    if not PlayerESPEnabled then
-        return
-    end
-
-    if Player == LocalPlayer then
-        return
-    end
-
-    RemovePlayerESP(Player)
-
-    local Character = Player.Character
-
-    if not Character or not Character.Parent then
-        return
-    end
-
-    local Root = Character:FindFirstChild("HumanoidRootPart")
-
-    if not Root then
-        return
-    end
-
-    local Highlight = Instance.new("Highlight")
-    Highlight.Name = "KOMAT_PlayerHighlight"
-    Highlight.Adornee = Character
-    Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-    Highlight.FillTransparency = 1
-    Highlight.OutlineTransparency = 0
-    Highlight.OutlineColor = Color3.fromRGB(90, 90, 90)
-    Highlight.Parent = Character
-
-    local Gui = Instance.new("BillboardGui")
-    Gui.Name = "KOMAT_PlayerName"
-    Gui.Adornee = Root
-    Gui.Size = UDim2.fromOffset(180, 42)
-    Gui.StudsOffset = Vector3.new(0, 4, 0)
-    Gui.AlwaysOnTop = true
-    Gui.MaxDistance = 10000
-    Gui.Parent = Root
-
-    local Background = Instance.new("Frame")
-    Background.Size = UDim2.new(1, 0, 1, 0)
-    Background.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
-    Background.BackgroundTransparency = 0.15
-    Background.Parent = Gui
-
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 9)
-    Corner.Parent = Background
-
-    local Stroke = Instance.new("UIStroke")
-    Stroke.Thickness = 2
-    Stroke.Color = Color3.fromRGB(100, 100, 100)
-    Stroke.Transparency = 0.15
-    Stroke.Parent = Background
-
-    local NameLabel = Instance.new("TextLabel")
-    NameLabel.Size = UDim2.new(1, -10, 1, 0)
-    NameLabel.Position = UDim2.fromOffset(5, 0)
-    NameLabel.BackgroundTransparency = 1
-    NameLabel.Text = "●  " .. Player.DisplayName
-    NameLabel.TextColor3 = Color3.fromRGB(225, 225, 225)
-    NameLabel.TextScaled = true
-    NameLabel.Font = Enum.Font.GothamBold
-    NameLabel.Parent = Background
-
-    local Attachment = Instance.new("Attachment")
-    Attachment.Name = "KOMAT_PlayerLine"
-    Attachment.Parent = Root
-
-    local Beam = nil
-
-    if SkyAttachment then
-        Beam = Instance.new("Beam")
-        Beam.Name = "KOMAT_PlayerLine"
-        Beam.Attachment0 = SkyAttachment
-        Beam.Attachment1 = Attachment
-        Beam.Width0 = 0.05
-        Beam.Width1 = 0.1
-        Beam.FaceCamera = true
-        Beam.AlwaysOnTop = true
-        Beam.LightEmission = 1
-        Beam.LightInfluence = 0
-        Beam.Transparency = NumberSequence.new(0.1)
-
-        Beam.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(
-                0,
-                Color3.fromRGB(55, 55, 55)
-            ),
-            ColorSequenceKeypoint.new(
-                0.5,
-                Color3.fromRGB(150, 150, 150)
-            ),
-            ColorSequenceKeypoint.new(
-                1,
-                Color3.fromRGB(45, 45, 45)
-            )
-        })
-
-        Beam.Parent = SkyPart
-    end
-
-    PlayerESPData[Player] = {
-        Character = Character,
-        Root = Root,
-        Highlight = Highlight,
-        Gui = Gui,
-        Attachment = Attachment,
-        Beam = Beam
-    }
-end
-
-local function SetupPlayer(Player)
-    if Player == LocalPlayer then
-        return
-    end
-
-    if PlayerCharacterConnections[Player] then
-        PlayerCharacterConnections[Player]:Disconnect()
-        PlayerCharacterConnections[Player] = nil
-    end
-
-    PlayerCharacterConnections[Player] =
-        Player.CharacterAdded:Connect(function(Character)
-            if not PlayerESPEnabled then
-                return
-            end
-
-            task.spawn(function()
-                local Root = Character:WaitForChild(
-                    "HumanoidRootPart",
-                    10
-                )
-
-                if not Root then
-                    return
-                end
-
-                task.wait(0.15)
-
-                if PlayerESPEnabled then
-                    CreatePlayerESP(Player)
-                end
-            end)
-        end)
-
-    if PlayerESPEnabled then
-        task.spawn(function()
-            local Character = Player.Character
-
-            if not Character then
-                return
-            end
-
-            local Root = Character:FindFirstChild(
-                "HumanoidRootPart"
-            )
-
-            if not Root then
-                Root = Character:WaitForChild(
-                    "HumanoidRootPart",
-                    5
-                )
-            end
-
-            if Root and PlayerESPEnabled then
-                CreatePlayerESP(Player)
-            end
-        end)
-    end
-end
-
-local function UpdateSkyPoint()
-    if not SkyPart then
-        return
-    end
-
-    local Character = LocalPlayer.Character
-    local Root = Character
-        and Character:FindFirstChild("HumanoidRootPart")
-
-    if Root then
-        SkyPart.CFrame =
-            CFrame.new(
-                Root.Position + Vector3.new(0, 25, 0)
-            )
-    end
-end
-
-local function RefreshAllPlayers()
-    for _, Player in ipairs(PlayersFolder:GetPlayers()) do
-        if Player ~= LocalPlayer then
-            SetupPlayer(Player)
-        end
-    end
-end
-
-local function StartPlayerESP()
-    if PlayerESPConnection then
-        PlayerESPConnection:Disconnect()
-        PlayerESPConnection = nil
-    end
-
-    CreateSkyPoint()
-    RefreshAllPlayers()
-
-    PlayerESPConnection = RunService.Heartbeat:Connect(function()
-        if not PlayerESPEnabled then
-            return
-        end
-
-        UpdateSkyPoint()
-
-        for _, Player in ipairs(PlayersFolder:GetPlayers()) do
-            if Player ~= LocalPlayer then
-                local Data = PlayerESPData[Player]
-                local Character = Player.Character
-
-                if Character and Character.Parent then
-                    if not Data
-                        or Data.Character ~= Character
-                        or not Data.Root
-                        or not Data.Root.Parent then
-
-                        CreatePlayerESP(Player)
-                    end
-                end
-            end
-        end
-    end)
-end
-
-local function StopPlayerESP()
-    if PlayerESPConnection then
-        PlayerESPConnection:Disconnect()
-        PlayerESPConnection = nil
-    end
-
-    for Player, Connection in pairs(PlayerCharacterConnections) do
-        Connection:Disconnect()
-        PlayerCharacterConnections[Player] = nil
-    end
-
-    for Player in pairs(PlayerESPData) do
-        RemovePlayerESP(Player)
-    end
-
-    PlayerESPData = {}
-
-    if SkyPart then
-        SkyPart:Destroy()
-        SkyPart = nil
-        SkyAttachment = nil
-    end
-end
-
-VisualTab:CreateSection("มองหาผู้เล่น")
-
-VisualTab:CreateToggle({
-    Name = "มองหาผู้เล่นทั้งหมด",
-    Default = false,
-
-    Callback = function(Value)
-        PlayerESPEnabled = Value
-
-        if Value then
-            StartPlayerESP()
-
-            Window:Notify({
-                Title = "KRYVEX HUB",
-                Content = "เปิดระบบมองหาผู้เล่นทั้งหมดแล้ว",
-                Duration = 3
-            })
-        else
-            StopPlayerESP()
-
-            Window:Notify({
-                Title = "KRYVEX HUB",
-                Content = "ปิดระบบมองหาผู้เล่นแล้ว",
-                Duration = 3
-            })
-        end
-    end
-})
-
-PlayersFolder.PlayerAdded:Connect(function(Player)
-    if Player == LocalPlayer then
-        return
-    end
-
-    SetupPlayer(Player)
-end)
-
-PlayersFolder.PlayerRemoving:Connect(function(Player)
-    RemovePlayerESP(Player)
-
-    if PlayerCharacterConnections[Player] then
-        PlayerCharacterConnections[Player]:Disconnect()
-        PlayerCharacterConnections[Player] = nil
-    end
-end)
-
-end
-do
-    local Players = game:GetService("Players")
-    local RunService = game:GetService("RunService")
-    local LocalPlayer = Players.LocalPlayer
-
-    -- กันรันซ้ำ: เคลียร์ตัวเก่าก่อน
-    local Env = (getgenv and getgenv()) or _G
-    if Env.KOMAT_DownedESP_Cleanup then
-        pcall(Env.KOMAT_DownedESP_Cleanup)
-    end
-
-    local DownedHealth = 2
-    local CheckDelay = 0.05
-
-    local Enabled = false
-    local Connection = nil
-    local Data = {}
-    local Container = nil
-    local SkyPart, SkyAttachment = nil, nil
-    local LastCheck = 0
-
-    local SweepNames = {
-        KOMAT_DownedName = true,
-        KOMAT_DownedHighlight = true,
-        KOMAT_DownedLine = true,
-        KOMAT_DownedESP_Sky = true,
-    }
-
-    local function GetGuiParent()
-        local ok, parent = pcall(function()
-            if gethui then return gethui() end
-            return game:GetService("CoreGui")
-        end)
-        if ok and parent then return parent end
-        return LocalPlayer:WaitForChild("PlayerGui")
-    end
-
-    local function GetFolders()
-        local list = {}
-        local A = workspace:FindFirstChild("Players")
-        if A then list[#list + 1] = A end
-        local G = workspace:FindFirstChild("Game")
-        local B = G and G:FindFirstChild("Players")
-        if B then list[#list + 1] = B end
-        return list
-    end
-
-    local function CollectModels()
-        local Models, Seen = {}, {}
-        local function Add(M)
-            if M and M:IsA("Model") and not Seen[M] and M:IsDescendantOf(workspace) then
-                Seen[M] = true
-                Models[#Models + 1] = M
-            end
-        end
-        for _, P in ipairs(Players:GetPlayers()) do
-            Add(P.Character)
-        end
-        for _, F in ipairs(GetFolders()) do
-            for _, C in ipairs(F:GetChildren()) do
-                Add(C)
-            end
-        end
-        return Models
-    end
-
-    local function FindPlayer(Model)
-        local P = Players:GetPlayerFromCharacter(Model)
-        if P then return P end
-
-        local Tag = Model:GetAttribute("Tag") or Model:GetAttribute("ID") or Model.Name
-        for _, Pl in ipairs(Players:GetPlayers()) do
-            if Pl.Name == Model.Name
-                or Pl.DisplayName == Model.Name
-                or tostring(Pl.UserId) == tostring(Tag)
-                or (Pl:GetAttribute("Tag") and tostring(Pl:GetAttribute("Tag")) == tostring(Tag)) then
-                return Pl
-            end
-        end
-        return nil
-    end
-
-    local function IsDowned(Model, Humanoid)
-        if Model:GetAttribute("Downed") == true then
-            return true
-        end
-        return Humanoid.Health <= DownedHealth
-    end
-
-    local function Remove(Model)
-        local D = Data[Model]
-        if not D then return end
-        Data[Model] = nil
-
-        for _, Key in ipairs({ "Gui", "Highlight", "Beam", "Attachment" }) do
-            local Obj = D[Key]
-            if Obj then
-                pcall(function() Obj:Destroy() end)
-            end
-        end
-    end
-
-    local function RemoveAll()
-        for Model in pairs(Data) do
-            Remove(Model)
-        end
-        Data = {}
-    end
-
-    local function Sweep()
-        -- กวาดของตกค้าง (รวมของจากสคริปต์เวอร์ชันเก่า) เฉพาะในโฟลเดอร์ผู้เล่น
-        local Roots = GetFolders()
-        for _, P in ipairs(Players:GetPlayers()) do
-            if P.Character then Roots[#Roots + 1] = P.Character end
-        end
-        for _, R in ipairs(Roots) do
-            for _, Obj in ipairs(R:GetDescendants()) do
-                if SweepNames[Obj.Name] then
-                    pcall(function() Obj:Destroy() end)
-                end
-            end
-        end
-    end
-
-    local function CreateSky()
-        SkyPart = Instance.new("Part")
-        SkyPart.Name = "KOMAT_DownedESP_Sky"
-        SkyPart.Size = Vector3.new(0.1, 0.1, 0.1)
-        SkyPart.Transparency = 1
-        SkyPart.Anchored = true
-        SkyPart.CanCollide = false
-        SkyPart.CanTouch = false
-        SkyPart.CanQuery = false
-        SkyPart.Parent = workspace
-
-        SkyAttachment = Instance.new("Attachment")
-        SkyAttachment.Name = "KOMAT_DownedESP_Center"
-        SkyAttachment.Parent = SkyPart
-    end
-
-    local function UpdateSky()
-        if not SkyPart then return end
-        local Char = LocalPlayer.Character
-        local Root = Char and Char:FindFirstChild("HumanoidRootPart")
-        if Root then
-            SkyPart.CFrame = CFrame.new(Root.Position + Vector3.new(0, 25, 0))
-        end
-    end
-
-    local function Create(Model, Player, Humanoid, Root)
-        local Highlight = Instance.new("Highlight")
-        Highlight.Name = "KOMAT_DownedHighlight"
-        Highlight.Adornee = Model
-        Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        Highlight.FillTransparency = 1
-        Highlight.OutlineTransparency = 0
-        Highlight.OutlineColor = Color3.fromRGB(110, 110, 110)
-        Highlight.Parent = Container
-
-        local Gui = Instance.new("BillboardGui")
-        Gui.Name = "KOMAT_DownedName"
-        Gui.Adornee = Root
-        Gui.Size = UDim2.fromOffset(200, 55)
-        Gui.StudsOffset = Vector3.new(0, 4, 0)
-        Gui.AlwaysOnTop = true
-        Gui.MaxDistance = 10000
-        Gui.Parent = Container
-
-        local Background = Instance.new("Frame")
-        Background.Size = UDim2.new(1, 0, 1, 0)
-        Background.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        Background.BackgroundTransparency = 0.1
-        Background.Parent = Gui
-
-        local Corner = Instance.new("UICorner")
-        Corner.CornerRadius = UDim.new(0, 10)
-        Corner.Parent = Background
-
-        local Stroke = Instance.new("UIStroke")
-        Stroke.Thickness = 2
-        Stroke.Color = Color3.fromRGB(110, 110, 110)
-        Stroke.Parent = Background
-
-        local NameLabel = Instance.new("TextLabel")
-        NameLabel.Size = UDim2.new(1, -10, 0, 29)
-        NameLabel.Position = UDim2.fromOffset(5, 2)
-        NameLabel.BackgroundTransparency = 1
-        NameLabel.Text = "✖  " .. (Player and Player.DisplayName or Model.Name)
-        NameLabel.TextColor3 = Color3.fromRGB(225, 225, 225)
-        NameLabel.TextScaled = true
-        NameLabel.Font = Enum.Font.GothamBold
-        NameLabel.Parent = Background
-
-        local Status = Instance.new("TextLabel")
-        Status.Size = UDim2.new(1, -10, 0, 18)
-        Status.Position = UDim2.fromOffset(5, 32)
-        Status.BackgroundTransparency = 1
-        Status.Text = "⚠ DOWNED • HP " .. math.floor(Humanoid.Health)
-        Status.TextColor3 = Color3.fromRGB(170, 170, 170)
-        Status.TextScaled = true
-        Status.Font = Enum.Font.GothamBold
-        Status.Parent = Background
-
-        local Attachment = Instance.new("Attachment")
-        Attachment.Name = "KOMAT_DownedLine"
-        Attachment.Parent = Root
-
-        local Beam = nil
-        if SkyAttachment then
-            Beam = Instance.new("Beam")
-            Beam.Name = "KOMAT_DownedLine"
-            Beam.Attachment0 = SkyAttachment
-            Beam.Attachment1 = Attachment
-            Beam.Width0 = 0.05
-            Beam.Width1 = 0.1
-            Beam.FaceCamera = true
-            Beam.LightEmission = 1
-            Beam.LightInfluence = 0
-            Beam.Transparency = NumberSequence.new(0.1)
-            Beam.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(45, 45, 45)),
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 150, 150)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 35)),
-            })
-            Beam.Parent = SkyPart
-        end
-
-        Data[Model] = {
-            Root = Root,
-            Humanoid = Humanoid,
-            Highlight = Highlight,
-            Gui = Gui,
-            Attachment = Attachment,
-            Beam = Beam,
-            Status = Status,
-        }
-    end
-
-    local function Check()
-        if not Enabled then return end
-
-        local Seen = {}
-
-        for _, Model in ipairs(CollectModels()) do
-            local Humanoid = Model:FindFirstChildOfClass("Humanoid")
-            local Root = Model:FindFirstChild("HumanoidRootPart") or Model.PrimaryPart
-
-            if Humanoid and Root and Model ~= LocalPlayer.Character then
-                local Player = FindPlayer(Model)
-
-                if Player ~= LocalPlayer and IsDowned(Model, Humanoid) then
-                    Seen[Model] = true
-
-                    local D = Data[Model]
-                    -- Root/Humanoid ถูกเปลี่ยน → สร้างใหม่
-                    if D and (D.Root ~= Root or D.Humanoid ~= Humanoid) then
-                        Remove(Model)
-                        D = nil
-                    end
-
-                    if not D then
-                        Create(Model, Player, Humanoid, Root)
-                    else
-                        D.Status.Text = "⚠ DOWNED • HP " .. math.floor(Humanoid.Health)
-                    end
-                end
-            end
-        end
-
-        -- อะไรที่ tick นี้ไม่เจอ / ไม่ล้มแล้ว / หายจากแมพ → ลบทิ้งหมด
-        for Model in pairs(Data) do
-            if not Seen[Model] then
-                Remove(Model)
-            end
-        end
-    end
-
-    local function Stop()
-        Enabled = false
-
-        if Connection then
-            Connection:Disconnect()
-            Connection = nil
-        end
-
-        RemoveAll()
-
-        if Container then
-            pcall(function() Container:Destroy() end)
-            Container = nil
-        end
-        if SkyPart then
-            pcall(function() SkyPart:Destroy() end)
-            SkyPart, SkyAttachment = nil, nil
-        end
-
-        Sweep()
-    end
-
-    local function Start()
-        Stop()
-        Enabled = true
-
-        Container = Instance.new("Folder")
-        Container.Name = "KOMAT_DownedESP"
-        Container.Parent = GetGuiParent()
-
-        CreateSky()
-        LastCheck = 0
-        Check()
-
-        Connection = RunService.Heartbeat:Connect(function()
-            if not Enabled then return end
-
-            UpdateSky()
-
-            local Now = os.clock()
-            if Now - LastCheck >= CheckDelay then
-                LastCheck = Now
-                Check()
-            end
-        end)
-    end
-
-    Env.KOMAT_DownedESP_Cleanup = Stop
-
-    VisualTab:CreateSection("มองหาผู้เล่นล้ม")
-
-    VisualTab:CreateToggle({
-        Name = "มองหาผู้เล่นล้ม",
-        Default = false,
-        Callback = function(Value)
-            if Value then
-                Start()
-                Window:Notify({
-                    Title = "KRYVEX HUB",
-                    Content = "เปิดระบบมองหาผู้เล่นล้มแล้ว",
-                    Duration = 3
-                })
-            else
-                Stop()
-                Window:Notify({
-                    Title = "KRYVEX HUB",
-                    Content = "ปิดระบบมองหาผู้เล่นล้มแล้ว",
-                    Duration = 3
-                })
-            end
-        end
-    })
-end
 
 do
 local NoclipEnabled = false
@@ -9200,6 +8277,688 @@ do
 
                 RemoveFloatingButton("ช่วยคนล้ม")
             end
+        end
+    })
+end
+
+
+--========================================================
+-- KRYVEX HUB | ESP SUITE
+-- Bot ESP / Player ESP / Downed ESP
+--========================================================
+do
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local LP = LocalPlayer or Players.LocalPlayer
+
+    local UPDATE_INTERVAL = 0.20
+    local OUTLINE_COLOR = Color3.fromRGB(65, 65, 65)
+    local TEXT_COLOR = Color3.fromRGB(225, 225, 225)
+    local RED_COLOR = Color3.fromRGB(255, 65, 65)
+
+    local BotEnabled = false
+    local PlayerEnabled = false
+    local DownedEnabled = false
+
+    local BotConnection
+    local PlayerConnection
+    local DownedConnection
+
+    local BotData = {}
+    local PlayerData = {}
+    local DownedData = {}
+
+    local BotFolder
+    local PlayerFolder
+    local DownedFolder
+
+    local BotSky
+    local BotSkyAttachment
+
+    local PlayerSky
+    local PlayerSkyAttachment
+
+    local DownedSky
+    local DownedSkyAttachment
+
+    local PlayerAddedConnection
+    local PlayerRemovingConnection
+
+    --====================================================
+    -- UTILITIES
+    --====================================================
+
+    local function GetParent()
+        local OK, Result = pcall(function()
+            if gethui then
+                return gethui()
+            end
+            return LP:WaitForChild("PlayerGui")
+        end)
+
+        if OK and Result then
+            return Result
+        end
+
+        return LP:WaitForChild("PlayerGui")
+    end
+
+    local function NewFolder(Name)
+        local Folder = Instance.new("Folder")
+        Folder.Name = Name
+        Folder.Parent = GetParent()
+        return Folder
+    end
+
+    local function DestroyObject(Object)
+        if Object then
+            pcall(function()
+                Object:Destroy()
+            end)
+        end
+    end
+
+    local function DestroyData(DataTable, Key)
+        local Data = DataTable[Key]
+        if not Data then
+            return
+        end
+
+        DataTable[Key] = nil
+
+        for _, Object in pairs(Data) do
+            if typeof(Object) == "Instance" then
+                DestroyObject(Object)
+            end
+        end
+    end
+
+    local function ClearData(DataTable)
+        local Keys = {}
+
+        for Key in pairs(DataTable) do
+            Keys[#Keys + 1] = Key
+        end
+
+        for _, Key in ipairs(Keys) do
+            DestroyData(DataTable, Key)
+        end
+    end
+
+    local function CreateSky(Name, Height)
+        local Part = Instance.new("Part")
+        Part.Name = Name
+        Part.Size = Vector3.new(0.1, 0.1, 0.1)
+        Part.Transparency = 1
+        Part.Anchored = true
+        Part.CanCollide = false
+        Part.CanTouch = false
+        Part.CanQuery = false
+        Part.Parent = workspace
+
+        local Attachment = Instance.new("Attachment")
+        Attachment.Parent = Part
+
+        return Part, Attachment, Height
+    end
+
+    local function UpdateSky(Part, Height)
+        if not Part then
+            return
+        end
+
+        local Character = LP.Character
+        local Root = Character
+            and Character:FindFirstChild("HumanoidRootPart")
+
+        if Root then
+            Part.CFrame = CFrame.new(
+                Root.Position + Vector3.new(0, Height, 0)
+            )
+        end
+    end
+
+    local function CreateLabel(Parent, Name, Text, Color, Height, Y)
+        local Label = Instance.new("TextLabel")
+        Label.Name = Name
+        Label.Size = UDim2.new(1, 0, 0, Height)
+        Label.Position = UDim2.fromOffset(0, Y)
+        Label.BackgroundTransparency = 1
+        Label.BorderSizePixel = 0
+        Label.Text = Text
+        Label.TextColor3 = Color
+        Label.TextStrokeColor3 = Color3.fromRGB(15, 15, 15)
+        Label.TextStrokeTransparency = 0.3
+        Label.TextScaled = true
+        Label.Font = Enum.Font.GothamBold
+        Label.Parent = Parent
+        return Label
+    end
+
+    local function CreateHighlight(Model, Parent, Name)
+        local Highlight = Instance.new("Highlight")
+        Highlight.Name = Name
+        Highlight.Adornee = Model
+        Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        Highlight.FillTransparency = 1
+        Highlight.OutlineTransparency = 0
+        Highlight.OutlineColor = OUTLINE_COLOR
+
+        -- ผูกกับโมเดลเพื่อให้แสดงขอบตัวละคร
+        Highlight.Parent = Model
+
+        return Highlight
+    end
+
+    --====================================================
+    -- BOT ESP
+    --====================================================
+
+    local function GetBotHitbox(Rig)
+        local Hitbox = Rig:FindFirstChild("Hitbox", true)
+
+        if Hitbox and Hitbox:IsA("BasePart") then
+            return Hitbox
+        end
+
+        return nil
+    end
+
+    local function RemoveBot(Rig)
+        DestroyData(BotData, Rig)
+    end
+
+    local function CreateBot(Rig)
+        if BotData[Rig] then
+            return
+        end
+
+        local Hitbox = GetBotHitbox(Rig)
+        if not Hitbox or not BotFolder then
+            return
+        end
+
+        local OK, Data = pcall(function()
+            local Gui = Instance.new("BillboardGui")
+            Gui.Name = "KRYVEX_BotName"
+            Gui.Adornee = Hitbox
+            Gui.Size = UDim2.fromOffset(180, 48)
+            Gui.StudsOffset = Vector3.new(0, 4, 0)
+            Gui.AlwaysOnTop = true
+            Gui.MaxDistance = 10000
+            Gui.Parent = BotFolder
+
+            CreateLabel(
+                Gui,
+                "BotTitle",
+                "⚠ " .. Rig.Name,
+                TEXT_COLOR,
+                28,
+                0
+            )
+
+            CreateLabel(
+                Gui,
+                "BotStatus",
+                "NEXTBOT • DETECTED",
+                Color3.fromRGB(190, 190, 190),
+                17,
+                29
+            )
+
+            local SkyAttachment = BotSkyAttachment
+            local BotAttachment = Instance.new("Attachment")
+            BotAttachment.Parent = Hitbox
+
+            local Beam = Instance.new("Beam")
+            Beam.Name = "KRYVEX_BotLine"
+            Beam.Attachment0 = SkyAttachment
+            Beam.Attachment1 = BotAttachment
+            Beam.Width0 = 0.08
+            Beam.Width1 = 0.08
+            Beam.FaceCamera = true
+            Beam.LightEmission = 1
+            Beam.LightInfluence = 0
+            Beam.Transparency = NumberSequence.new(0.1)
+            Beam.Color = ColorSequence.new(TEXT_COLOR)
+            Beam.Parent = BotSky
+
+            return {
+                Gui = Gui,
+                Beam = Beam,
+                Attachment = BotAttachment,
+            }
+        end)
+
+        if OK and Data then
+            BotData[Rig] = Data
+        end
+    end
+
+    local function UpdateBots()
+        if not BotEnabled then
+            return
+        end
+
+        local Rigs = workspace:FindFirstChild("Rigs")
+        if not Rigs then
+            return
+        end
+
+        local Seen = {}
+
+        for _, Rig in ipairs(Rigs:GetChildren()) do
+            local Hitbox = GetBotHitbox(Rig)
+
+            if Hitbox then
+                Seen[Rig] = true
+
+                local Data = BotData[Rig]
+                if Data and (
+                    not Data.Gui
+                    or not Data.Gui.Parent
+                    or not Data.Attachment
+                    or Data.Attachment.Parent ~= Hitbox
+                ) then
+                    RemoveBot(Rig)
+                    Data = nil
+                end
+
+                if not Data then
+                    CreateBot(Rig)
+                end
+
+                local Current = BotData[Rig]
+                if Current and Current.Beam then
+                    Current.Beam.Enabled = true
+                end
+            end
+        end
+
+        for Rig in pairs(BotData) do
+            if not Seen[Rig] then
+                RemoveBot(Rig)
+            end
+        end
+    end
+
+    local function StopBots()
+        BotEnabled = false
+
+        if BotConnection then
+            BotConnection:Disconnect()
+            BotConnection = nil
+        end
+
+        ClearData(BotData)
+
+        DestroyObject(BotFolder)
+        BotFolder = nil
+
+        DestroyObject(BotSky)
+        BotSky = nil
+        BotSkyAttachment = nil
+    end
+
+    local function StartBots()
+        StopBots()
+
+        BotEnabled = true
+        BotFolder = NewFolder("KRYVEX_BotESP")
+        BotSky, BotSkyAttachment = CreateSky(
+            "KRYVEX_BotSky",
+            60
+        )
+
+        UpdateBots()
+
+        local Last = 0
+        BotConnection = RunService.Heartbeat:Connect(function()
+            if not BotEnabled then
+                return
+            end
+
+            UpdateSky(BotSky, 60)
+
+            if os.clock() - Last >= UPDATE_INTERVAL then
+                Last = os.clock()
+                UpdateBots()
+            end
+        end)
+    end
+
+    --====================================================
+    -- PLAYER / DOWNED ESP
+    --====================================================
+
+    local function CreatePlayerESP(Player, IsDowned)
+        local Character = Player.Character
+        local Humanoid = Character
+            and Character:FindFirstChildOfClass("Humanoid")
+        local Root = Character
+            and Character:FindFirstChild("HumanoidRootPart")
+
+        if not Character or not Humanoid or not Root then
+            return nil
+        end
+
+        local Folder = IsDowned and DownedFolder or PlayerFolder
+        if not Folder then
+            return nil
+        end
+
+        local OK, Data = pcall(function()
+            local Highlight = CreateHighlight(
+                Character,
+                Folder,
+                IsDowned
+                    and "KRYVEX_DownedHighlight"
+                    or "KRYVEX_PlayerHighlight"
+            )
+
+            local Gui = Instance.new("BillboardGui")
+            Gui.Name = IsDowned
+                and "KRYVEX_DownedName"
+                or "KRYVEX_PlayerName"
+            Gui.Adornee = Root
+            Gui.Size = UDim2.fromOffset(
+                190,
+                IsDowned and 36 or 24
+            )
+            Gui.StudsOffset = Vector3.new(0, 3.5, 0)
+            Gui.AlwaysOnTop = true
+            Gui.MaxDistance = 10000
+            Gui.Parent = Folder
+
+            CreateLabel(
+                Gui,
+                "PlayerName",
+                Player.DisplayName,
+                TEXT_COLOR,
+                22,
+                0
+            )
+
+            local Status
+            if IsDowned then
+                Status = CreateLabel(
+                    Gui,
+                    "DownedStatus",
+                    "● ล้ม",
+                    RED_COLOR,
+                    15,
+                    21
+                )
+            end
+
+            return {
+                Character = Character,
+                Root = Root,
+                Humanoid = Humanoid,
+                Highlight = Highlight,
+                Gui = Gui,
+                Status = Status,
+            }
+        end)
+
+        if OK then
+            return Data
+        end
+
+        return nil
+    end
+
+    local function UpdatePlayers(IsDowned)
+        local Enabled = IsDowned and DownedEnabled or PlayerEnabled
+        if not Enabled then
+            return
+        end
+
+        local DataTable = IsDowned and DownedData or PlayerData
+        local Seen = {}
+
+        for _, Player in ipairs(Players:GetPlayers()) do
+            if Player ~= LP then
+                local Character = Player.Character
+                local Humanoid = Character
+                    and Character:FindFirstChildOfClass("Humanoid")
+                local Root = Character
+                    and Character:FindFirstChild("HumanoidRootPart")
+
+                local Valid = Character
+                    and Character.Parent
+                    and Humanoid
+                    and Root
+                    and Root:IsA("BasePart")
+
+                if IsDowned then
+                    Valid = Valid and Humanoid.Health <= 0
+                end
+
+                local Data = DataTable[Player]
+
+                if Data and (
+                    not Valid
+                    or Data.Character ~= Character
+                    or Data.Root ~= Root
+                    or Data.Humanoid ~= Humanoid
+                    or not Data.Gui
+                    or not Data.Gui.Parent
+                    or not Data.Highlight
+                    or not Data.Highlight.Parent
+                ) then
+                    DestroyData(DataTable, Player)
+                    Data = nil
+                end
+
+                if Valid then
+                    Seen[Player] = true
+
+                    if not Data then
+                        DataTable[Player] =
+                            CreatePlayerESP(Player, IsDowned)
+                    end
+                end
+            end
+        end
+
+        for Player in pairs(DataTable) do
+            if not Seen[Player] then
+                DestroyData(DataTable, Player)
+            end
+        end
+    end
+
+    local function StartPlayers(IsDowned)
+        local Folder
+
+        if IsDowned then
+            DownedEnabled = false
+            ClearData(DownedData)
+            DestroyObject(DownedFolder)
+
+            DownedFolder = NewFolder("KRYVEX_DownedESP")
+            DownedEnabled = true
+            Folder = DownedFolder
+        else
+            PlayerEnabled = false
+            ClearData(PlayerData)
+            DestroyObject(PlayerFolder)
+
+            PlayerFolder = NewFolder("KRYVEX_PlayerESP")
+            PlayerEnabled = true
+            Folder = PlayerFolder
+        end
+
+        UpdatePlayers(IsDowned)
+    end
+
+    local function StopPlayers(IsDowned)
+        if IsDowned then
+            DownedEnabled = false
+            ClearData(DownedData)
+            DestroyObject(DownedFolder)
+            DownedFolder = nil
+        else
+            PlayerEnabled = false
+            ClearData(PlayerData)
+            DestroyObject(PlayerFolder)
+            PlayerFolder = nil
+        end
+    end
+
+    local function EnsurePlayerLoop()
+        if PlayerConnection then
+            PlayerConnection:Disconnect()
+        end
+
+        local Last = 0
+        PlayerConnection = RunService.Heartbeat:Connect(function()
+            if not PlayerEnabled and not DownedEnabled then
+                PlayerConnection:Disconnect()
+                PlayerConnection = nil
+                return
+            end
+
+            UpdateSky(PlayerSky, 25)
+            UpdateSky(DownedSky, 25)
+
+            if os.clock() - Last >= UPDATE_INTERVAL then
+                Last = os.clock()
+
+                if PlayerEnabled then
+                    UpdatePlayers(false)
+                end
+
+                if DownedEnabled then
+                    UpdatePlayers(true)
+                end
+            end
+        end)
+    end
+
+    local function SetPlayers(Value)
+        if Value then
+            if not PlayerFolder then
+                PlayerFolder = NewFolder("KRYVEX_PlayerESP")
+            end
+
+            if not PlayerSky then
+                PlayerSky, PlayerSkyAttachment = CreateSky(
+                    "KRYVEX_PlayerSky",
+                    25
+                )
+            end
+
+            PlayerEnabled = true
+            UpdatePlayers(false)
+            EnsurePlayerLoop()
+        else
+            StopPlayers(false)
+
+            if not DownedEnabled then
+                DestroyObject(PlayerSky)
+                PlayerSky = nil
+                PlayerSkyAttachment = nil
+            end
+        end
+    end
+
+    local function SetDowned(Value)
+        if Value then
+            if not DownedFolder then
+                DownedFolder = NewFolder("KRYVEX_DownedESP")
+            end
+
+            if not DownedSky then
+                DownedSky, DownedSkyAttachment = CreateSky(
+                    "KRYVEX_DownedSky",
+                    25
+                )
+            end
+
+            DownedEnabled = true
+            UpdatePlayers(true)
+            EnsurePlayerLoop()
+        else
+            StopPlayers(true)
+
+            if not PlayerEnabled then
+                DestroyObject(DownedSky)
+                DownedSky = nil
+                DownedSkyAttachment = nil
+            end
+        end
+    end
+
+    --====================================================
+    -- PLAYER JOIN / LEAVE
+    --====================================================
+
+    PlayerRemovingConnection = Players.PlayerRemoving:Connect(function(Player)
+        DestroyData(PlayerData, Player)
+        DestroyData(DownedData, Player)
+    end)
+
+    --====================================================
+    -- UI
+    --====================================================
+
+    VisualTab:CreateSection("มองหาบอท")
+
+    VisualTab:CreateToggle({
+        Name = "มองหาบอท",
+        Default = false,
+        Callback = function(Value)
+            if Value then
+                StartBots()
+            else
+                StopBots()
+            end
+
+            Window:Notify({
+                Title = "KRYVEX HUB",
+                Content = Value
+                    and "เปิดระบบมองหาบอทแล้ว"
+                    or "ปิดระบบมองหาบอทแล้ว",
+                Duration = 3
+            })
+        end
+    })
+
+    VisualTab:CreateSection("มองหาผู้เล่น")
+
+    VisualTab:CreateToggle({
+        Name = "มองหาผู้เล่นทั้งหมด",
+        Default = false,
+        Callback = function(Value)
+            SetPlayers(Value)
+
+            Window:Notify({
+                Title = "KRYVEX HUB",
+                Content = Value
+                    and "เปิดมองหาผู้เล่นทั้งหมดแล้ว"
+                    or "ปิดมองหาผู้เล่นทั้งหมดแล้ว",
+                Duration = 3
+            })
+        end
+    })
+
+    VisualTab:CreateSection("มองหาผู้เล่นล้ม")
+
+    VisualTab:CreateToggle({
+        Name = "มองหาผู้เล่นล้ม",
+        Default = false,
+        Callback = function(Value)
+            SetDowned(Value)
+
+            Window:Notify({
+                Title = "KRYVEX HUB",
+                Content = Value
+                    and "เปิดมองหาผู้เล่นล้มแล้ว"
+                    or "ปิดมองหาผู้เล่นล้มแล้ว",
+                Duration = 3
+            })
         end
     })
 end
