@@ -14,7 +14,7 @@ local Window = KOMAT:CreateWindow({
     Subtitle = "KRYVEX HUB",
 
     -- normal / halloween / christmas / valentine / summer
-    Theme = "halloween",
+    Theme = "normal",
 
     -- true เปิดฉากแอนิเมชัน / false ปิด
     ThemeAnimation = true,
