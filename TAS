@@ -1,7 +1,7 @@
 --[[
 =========================================================
                     KRYVEX HUB UI LIBRARY
-                       v1.4.0.0
+                       v1.3.0
 =========================================================
 
 CORE
@@ -79,7 +79,7 @@ local LocalPlayer = Players.LocalPlayer
 local KRYVEX = {}
 
 KRYVEX.Name = "Kryvex Hub"
-KRYVEX.Version = "1.4.0.0"
+KRYVEX.Version = "1.7.0"
 
 --=========================================================
 -- THEME
@@ -94,200 +94,82 @@ KRYVEX.Version = "1.4.0.0"
 KRYVEX.Themes = {
 
     Grey = {
+
         IsHalloween = false,
-        Background = Color3.fromRGB(18, 19, 24),
-        Sidebar = Color3.fromRGB(12, 13, 17),
-        Card = Color3.fromRGB(29, 31, 37),
-        CardHover = Color3.fromRGB(45, 48, 56),
-        Primary = Color3.fromRGB(202, 207, 216),
-        PrimaryDark = Color3.fromRGB(110, 115, 125),
-        Text = Color3.fromRGB(247, 248, 250),
-        SubText = Color3.fromRGB(166, 171, 181),
-        ToggleOff = Color3.fromRGB(76, 79, 88),
+        Background = Color3.fromRGB(46, 47, 52),
+        Sidebar = Color3.fromRGB(38, 39, 44),
+        Card = Color3.fromRGB(62, 63, 69),
+        CardHover = Color3.fromRGB(77, 78, 85),
+        Primary = Color3.fromRGB(178, 183, 192),
+        PrimaryDark = Color3.fromRGB(102, 106, 115),
+        Text = Color3.fromRGB(240, 245, 250),
+        SubText = Color3.fromRGB(155, 170, 188),
+        ToggleOff = Color3.fromRGB(88, 90, 97),
         Danger = Color3.fromRGB(190, 65, 75),
         Success = Color3.fromRGB(75, 210, 125),
         Warning = Color3.fromRGB(255, 190, 70),
-        Stroke1 = Color3.fromRGB(82, 87, 97),
-        Stroke2 = Color3.fromRGB(232, 235, 241),
-        Stroke3 = Color3.fromRGB(137, 143, 153),
+        Stroke1 = Color3.fromRGB(92, 96, 104),
+        Stroke2 = Color3.fromRGB(190, 195, 203),
+        Stroke3 = Color3.fromRGB(112, 117, 125),
         Sheen1 = Color3.fromRGB(255, 255, 255),
-        Sheen2 = Color3.fromRGB(171, 176, 186),
-        Sheen3 = Color3.fromRGB(238, 240, 244),
-        FloatBg = Color3.fromRGB(12, 13, 17),
-        FloatEdge1 = Color3.fromRGB(123, 129, 139),
-        FloatEdge2 = Color3.fromRGB(246, 247, 250),
-        FxDark = Color3.fromRGB(65, 69, 78),
-        FxMid = Color3.fromRGB(126, 132, 143),
-        FxSilver = Color3.fromRGB(191, 197, 207),
-        FxLight = Color3.fromRGB(232, 235, 240),
+        Sheen2 = Color3.fromRGB(196, 198, 205),
+        Sheen3 = Color3.fromRGB(236, 238, 242),
+        FloatBg = Color3.fromRGB(24, 25, 28),
+        FloatEdge1 = Color3.fromRGB(150, 155, 163),
+        FloatEdge2 = Color3.fromRGB(235, 238, 243),
+        FxDark = Color3.fromRGB(105, 109, 118),
+        FxMid = Color3.fromRGB(150, 156, 165),
+        FxSilver = Color3.fromRGB(185, 191, 200),
+        FxLight = Color3.fromRGB(235, 238, 243),
         FxWhite = Color3.fromRGB(255, 255, 255),
+
     },
 
     Halloween = {
+
         IsHalloween = true,
-        Background = Color3.fromRGB(20, 13, 27),
-        Sidebar = Color3.fromRGB(14, 9, 19),
-        Card = Color3.fromRGB(34, 22, 44),
-        CardHover = Color3.fromRGB(52, 32, 66),
-        Primary = Color3.fromRGB(255, 147, 52),
-        PrimaryDark = Color3.fromRGB(174, 77, 24),
-        Text = Color3.fromRGB(255, 246, 235),
-        SubText = Color3.fromRGB(197, 172, 211),
-        ToggleOff = Color3.fromRGB(75, 54, 86),
-        Danger = Color3.fromRGB(211, 55, 66),
-        Success = Color3.fromRGB(160, 220, 100),
-        Warning = Color3.fromRGB(255, 205, 82),
-        Stroke1 = Color3.fromRGB(127, 62, 159),
-        Stroke2 = Color3.fromRGB(255, 161, 67),
-        Stroke3 = Color3.fromRGB(174, 87, 193),
-        Sheen1 = Color3.fromRGB(255, 224, 176),
-        Sheen2 = Color3.fromRGB(191, 136, 226),
-        Sheen3 = Color3.fromRGB(255, 192, 111),
-        FloatBg = Color3.fromRGB(17, 10, 23),
-        FloatEdge1 = Color3.fromRGB(154, 75, 191),
-        FloatEdge2 = Color3.fromRGB(255, 177, 78),
-        FxDark = Color3.fromRGB(88, 43, 124),
-        FxMid = Color3.fromRGB(171, 92, 211),
-        FxSilver = Color3.fromRGB(255, 157, 50),
-        FxLight = Color3.fromRGB(255, 199, 105),
-        FxWhite = Color3.fromRGB(255, 244, 224),
+        Background = Color3.fromRGB(30, 20, 38),
+        Sidebar = Color3.fromRGB(22, 14, 28),
+        Card = Color3.fromRGB(46, 31, 58),
+        CardHover = Color3.fromRGB(66, 44, 82),
+        Primary = Color3.fromRGB(255, 140, 30),
+        PrimaryDark = Color3.fromRGB(150, 75, 15),
+        Text = Color3.fromRGB(255, 240, 222),
+        SubText = Color3.fromRGB(190, 160, 200),
+        ToggleOff = Color3.fromRGB(80, 60, 95),
+        Danger = Color3.fromRGB(205, 50, 60),
+        Success = Color3.fromRGB(125, 215, 85),
+        Warning = Color3.fromRGB(255, 205, 70),
+        Stroke1 = Color3.fromRGB(120, 50, 170),
+        Stroke2 = Color3.fromRGB(255, 140, 30),
+        Stroke3 = Color3.fromRGB(140, 60, 190),
+        Sheen1 = Color3.fromRGB(255, 215, 170),
+        Sheen2 = Color3.fromRGB(175, 120, 210),
+        Sheen3 = Color3.fromRGB(255, 190, 120),
+        FloatBg = Color3.fromRGB(24, 12, 32),
+        FloatEdge1 = Color3.fromRGB(150, 70, 200),
+        FloatEdge2 = Color3.fromRGB(255, 170, 60),
+        FxDark = Color3.fromRGB(95, 45, 140),
+        FxMid = Color3.fromRGB(165, 95, 225),
+        FxSilver = Color3.fromRGB(255, 125, 20),
+        FxLight = Color3.fromRGB(255, 185, 80),
+        FxWhite = Color3.fromRGB(255, 240, 210),
+
     },
 
 }
 
--- Derived theme palettes keep the existing theme names and API stable.
+-- ธีมเสริมและค่าตั้งต้น
 local function CloneTheme(source, patch)
     local result = {}
     for key, value in pairs(source) do result[key] = value end
     for key, value in pairs(patch or {}) do result[key] = value end
     return result
 end
-
-KRYVEX.Themes.Normal = CloneTheme(KRYVEX.Themes.Grey, {
-    ThemeId = "normal",
-    Animation = "clean",
-    IsHalloween = false,
-    Background = Color3.fromRGB(17, 18, 22),
-    Sidebar = Color3.fromRGB(11, 12, 16),
-    Card = Color3.fromRGB(27, 29, 34),
-    CardHover = Color3.fromRGB(44, 47, 55),
-    Primary = Color3.fromRGB(202, 207, 216),
-    PrimaryDark = Color3.fromRGB(105, 110, 120),
-    Text = Color3.fromRGB(247, 248, 250),
-    SubText = Color3.fromRGB(168, 173, 182),
-    ToggleOff = Color3.fromRGB(76, 79, 88),
-    Stroke1 = Color3.fromRGB(78, 83, 93),
-    Stroke2 = Color3.fromRGB(235, 238, 243),
-    Stroke3 = Color3.fromRGB(135, 141, 151),
-    Sheen1 = Color3.fromRGB(255, 255, 255),
-    Sheen2 = Color3.fromRGB(174, 179, 188),
-    Sheen3 = Color3.fromRGB(236, 238, 242),
-    FloatBg = Color3.fromRGB(12, 13, 17),
-    FloatEdge1 = Color3.fromRGB(126, 132, 143),
-    FloatEdge2 = Color3.fromRGB(246, 247, 250),
-    FxDark = Color3.fromRGB(65, 69, 78),
-    FxMid = Color3.fromRGB(126, 132, 143),
-    FxSilver = Color3.fromRGB(191, 197, 207),
-    FxLight = Color3.fromRGB(232, 235, 240),
-    FxWhite = Color3.fromRGB(255, 255, 255),
-})
-
-KRYVEX.Themes.Christmas = CloneTheme(KRYVEX.Themes.Grey, {
-    ThemeId = "christmas",
-    Animation = "snow",
-    IsHalloween = false,
-    Background = Color3.fromRGB(13, 28, 25),
-    Sidebar = Color3.fromRGB(8, 19, 18),
-    Card = Color3.fromRGB(24, 46, 38),
-    CardHover = Color3.fromRGB(38, 67, 54),
-    Primary = Color3.fromRGB(231, 64, 80),
-    PrimaryDark = Color3.fromRGB(151, 35, 48),
-    Text = Color3.fromRGB(246, 250, 246),
-    SubText = Color3.fromRGB(171, 206, 190),
-    ToggleOff = Color3.fromRGB(55, 75, 65),
-    Danger = Color3.fromRGB(211, 55, 66),
-    Success = Color3.fromRGB(99, 199, 127),
-    Warning = Color3.fromRGB(255, 203, 91),
-    Stroke1 = Color3.fromRGB(35, 132, 91),
-    Stroke2 = Color3.fromRGB(255, 209, 119),
-    Stroke3 = Color3.fromRGB(185, 55, 68),
-    Sheen1 = Color3.fromRGB(255, 246, 215),
-    Sheen2 = Color3.fromRGB(205, 67, 79),
-    Sheen3 = Color3.fromRGB(164, 224, 190),
-    FloatBg = Color3.fromRGB(8, 22, 20),
-    FloatEdge1 = Color3.fromRGB(203, 55, 70),
-    FloatEdge2 = Color3.fromRGB(255, 220, 139),
-    FxDark = Color3.fromRGB(20, 83, 61),
-    FxMid = Color3.fromRGB(69, 165, 111),
-    FxSilver = Color3.fromRGB(231, 239, 231),
-    FxLight = Color3.fromRGB(255, 226, 157),
-    FxWhite = Color3.fromRGB(255, 255, 255),
-})
-
-KRYVEX.Themes.Valentine = CloneTheme(KRYVEX.Themes.Grey, {
-    ThemeId = "valentine",
-    Animation = "hearts",
-    IsHalloween = false,
-    Background = Color3.fromRGB(32, 13, 27),
-    Sidebar = Color3.fromRGB(22, 9, 19),
-    Card = Color3.fromRGB(51, 23, 43),
-    CardHover = Color3.fromRGB(75, 32, 60),
-    Primary = Color3.fromRGB(255, 94, 158),
-    PrimaryDark = Color3.fromRGB(163, 38, 94),
-    Text = Color3.fromRGB(255, 243, 249),
-    SubText = Color3.fromRGB(210, 164, 190),
-    ToggleOff = Color3.fromRGB(85, 52, 73),
-    Danger = Color3.fromRGB(224, 63, 91),
-    Success = Color3.fromRGB(112, 207, 144),
-    Warning = Color3.fromRGB(255, 193, 94),
-    Stroke1 = Color3.fromRGB(164, 54, 112),
-    Stroke2 = Color3.fromRGB(255, 145, 190),
-    Stroke3 = Color3.fromRGB(209, 78, 145),
-    Sheen1 = Color3.fromRGB(255, 219, 235),
-    Sheen2 = Color3.fromRGB(231, 92, 156),
-    Sheen3 = Color3.fromRGB(255, 241, 248),
-    FloatBg = Color3.fromRGB(24, 9, 20),
-    FloatEdge1 = Color3.fromRGB(226, 74, 146),
-    FloatEdge2 = Color3.fromRGB(255, 190, 218),
-    FxDark = Color3.fromRGB(126, 31, 80),
-    FxMid = Color3.fromRGB(220, 80, 151),
-    FxSilver = Color3.fromRGB(255, 167, 205),
-    FxLight = Color3.fromRGB(255, 137, 187),
-    FxWhite = Color3.fromRGB(255, 247, 251),
-})
-
-KRYVEX.Themes.Summer = CloneTheme(KRYVEX.Themes.Grey, {
-    ThemeId = "summer",
-    Animation = "bubbles",
-    IsHalloween = false,
-    Background = Color3.fromRGB(9, 33, 41),
-    Sidebar = Color3.fromRGB(7, 22, 30),
-    Card = Color3.fromRGB(18, 51, 58),
-    CardHover = Color3.fromRGB(30, 76, 82),
-    Primary = Color3.fromRGB(255, 197, 75),
-    PrimaryDark = Color3.fromRGB(170, 106, 27),
-    Text = Color3.fromRGB(242, 252, 248),
-    SubText = Color3.fromRGB(150, 204, 199),
-    ToggleOff = Color3.fromRGB(52, 85, 83),
-    Danger = Color3.fromRGB(224, 75, 69),
-    Success = Color3.fromRGB(84, 215, 165),
-    Warning = Color3.fromRGB(255, 207, 88),
-    Stroke1 = Color3.fromRGB(40, 164, 166),
-    Stroke2 = Color3.fromRGB(255, 214, 112),
-    Stroke3 = Color3.fromRGB(74, 193, 177),
-    Sheen1 = Color3.fromRGB(255, 238, 171),
-    Sheen2 = Color3.fromRGB(39, 168, 176),
-    Sheen3 = Color3.fromRGB(218, 251, 226),
-    FloatBg = Color3.fromRGB(5, 25, 32),
-    FloatEdge1 = Color3.fromRGB(45, 184, 184),
-    FloatEdge2 = Color3.fromRGB(255, 222, 130),
-    FxDark = Color3.fromRGB(14, 91, 98),
-    FxMid = Color3.fromRGB(40, 175, 174),
-    FxSilver = Color3.fromRGB(153, 230, 217),
-    FxLight = Color3.fromRGB(255, 222, 137),
-    FxWhite = Color3.fromRGB(245, 255, 250),
-})
-
+KRYVEX.Themes.Normal = CloneTheme(KRYVEX.Themes.Grey, { ThemeId="normal", Animation="clean", IsHalloween=false, Background=Color3.fromRGB(17,18,22), Sidebar=Color3.fromRGB(11,12,16), Card=Color3.fromRGB(27,29,34), CardHover=Color3.fromRGB(44,47,55), Primary=Color3.fromRGB(198,203,212), PrimaryDark=Color3.fromRGB(105,110,120), Text=Color3.fromRGB(247,248,250), SubText=Color3.fromRGB(168,173,182), Stroke1=Color3.fromRGB(78,83,93), Stroke2=Color3.fromRGB(235,238,243), Stroke3=Color3.fromRGB(135,141,151), Sheen1=Color3.fromRGB(255,255,255), Sheen2=Color3.fromRGB(174,179,188), Sheen3=Color3.fromRGB(236,238,242), FloatBg=Color3.fromRGB(12,13,17), FloatEdge1=Color3.fromRGB(126,132,143), FloatEdge2=Color3.fromRGB(246,247,250), FxDark=Color3.fromRGB(65,69,78), FxMid=Color3.fromRGB(126,132,143), FxSilver=Color3.fromRGB(191,197,207), FxLight=Color3.fromRGB(232,235,240), FxWhite=Color3.fromRGB(255,255,255) })
+KRYVEX.Themes.Christmas = CloneTheme(KRYVEX.Themes.Grey, { ThemeId="christmas", Animation="snow", IsHalloween=false, Background=Color3.fromRGB(18,35,42), Sidebar=Color3.fromRGB(13,28,34), Card=Color3.fromRGB(27,58,61), CardHover=Color3.fromRGB(39,83,80), Primary=Color3.fromRGB(218,55,68), PrimaryDark=Color3.fromRGB(145,30,45), Text=Color3.fromRGB(245,255,246), SubText=Color3.fromRGB(170,211,198), Stroke1=Color3.fromRGB(25,125,95), Stroke2=Color3.fromRGB(235,70,80), Stroke3=Color3.fromRGB(205,180,80), Sheen1=Color3.fromRGB(255,245,205), Sheen2=Color3.fromRGB(205,60,75), Sheen3=Color3.fromRGB(160,235,205), FloatBg=Color3.fromRGB(10,28,29), FloatEdge1=Color3.fromRGB(205,50,65), FloatEdge2=Color3.fromRGB(255,225,125), FxDark=Color3.fromRGB(20,85,67), FxMid=Color3.fromRGB(80,175,130), FxSilver=Color3.fromRGB(235,245,255), FxLight=Color3.fromRGB(255,245,210), FxWhite=Color3.fromRGB(255,255,255) })
+KRYVEX.Themes.Valentine = CloneTheme(KRYVEX.Themes.Grey, { ThemeId="valentine", Animation="hearts", IsHalloween=false, Background=Color3.fromRGB(45,18,34), Sidebar=Color3.fromRGB(31,12,25), Card=Color3.fromRGB(72,28,54), CardHover=Color3.fromRGB(100,38,72), Primary=Color3.fromRGB(255,82,145), PrimaryDark=Color3.fromRGB(170,35,90), Text=Color3.fromRGB(255,239,247), SubText=Color3.fromRGB(220,160,190), Stroke1=Color3.fromRGB(175,45,105), Stroke2=Color3.fromRGB(255,115,175), Stroke3=Color3.fromRGB(215,75,135), Sheen1=Color3.fromRGB(255,190,220), Sheen2=Color3.fromRGB(220,70,140), Sheen3=Color3.fromRGB(255,235,245), FloatBg=Color3.fromRGB(30,9,23), FloatEdge1=Color3.fromRGB(220,55,125), FloatEdge2=Color3.fromRGB(255,170,210), FxDark=Color3.fromRGB(130,25,75), FxMid=Color3.fromRGB(230,70,145), FxSilver=Color3.fromRGB(255,155,205), FxLight=Color3.fromRGB(255,110,175), FxWhite=Color3.fromRGB(255,245,250) })
+KRYVEX.Themes.Summer = CloneTheme(KRYVEX.Themes.Grey, { ThemeId="summer", Animation="bubbles", IsHalloween=false, Background=Color3.fromRGB(12,47,64), Sidebar=Color3.fromRGB(8,33,49), Card=Color3.fromRGB(19,78,91), CardHover=Color3.fromRGB(27,108,119), Primary=Color3.fromRGB(255,194,62), PrimaryDark=Color3.fromRGB(190,112,25), Text=Color3.fromRGB(239,255,255), SubText=Color3.fromRGB(143,211,220), Stroke1=Color3.fromRGB(20,155,175), Stroke2=Color3.fromRGB(255,205,85), Stroke3=Color3.fromRGB(50,205,195), Sheen1=Color3.fromRGB(255,239,145), Sheen2=Color3.fromRGB(30,185,210), Sheen3=Color3.fromRGB(210,255,240), FloatBg=Color3.fromRGB(5,28,41), FloatEdge1=Color3.fromRGB(35,190,210), FloatEdge2=Color3.fromRGB(255,220,100), FxDark=Color3.fromRGB(15,105,130), FxMid=Color3.fromRGB(40,190,205), FxSilver=Color3.fromRGB(155,245,235), FxLight=Color3.fromRGB(255,220,100), FxWhite=Color3.fromRGB(245,255,255) })
 KRYVEX.ThemeAliases = { grey="normal", default="normal", normal="normal", halloween="halloween", christmas="christmas", xmas="christmas", valentine="valentine", valentines="valentine", summer="summer" }
 KRYVEX.ThemeSettings = { Theme="halloween", Animation=true }
 
