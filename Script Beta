@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
 local KOMAT = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/komayma273-cyber/Kom/refs/heads/main/Koma"
+    "https://raw.githubusercontent.com/komayma273-cyber/Script-Evade/refs/heads/main/TAS"
 ))()
 
 local Window = KOMAT:CreateWindow({
